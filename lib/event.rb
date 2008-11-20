@@ -19,7 +19,7 @@ module AASM
         next_state = nil
         transitions.each do |transition|
           next if to_state and !Array(transition.to).include?(to_state)
-          if transition.perform(obj)
+          if transition.perform(obj, *args)
             next_state = to_state || Array(transition.to).first
             transition.execute(obj, *args)
             break
@@ -32,14 +32,14 @@ module AASM
         @transitions.any? { |t| t.from == state }
       end
       
-      def execute_success_callback(obj)
+      def execute_success_callback(obj, *args)
         case success
         when String, Symbol:
-          obj.send(success)
+          obj.send(success, *args)
         when Array:
-          success.each { |meth| obj.send(meth) }
+          success.each { |meth| obj.send(meth, *args) }
         when Proc:
-          success.call(obj)
+          success.call(obj, *args)
         end
       end
 

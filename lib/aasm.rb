@@ -121,17 +121,17 @@ module AASM
   end
 
   def aasm_fire_event(name, persist, *args)
-    aasm_state_object_for_state(aasm_current_state).call_action(:exit, self)
+    aasm_state_object_for_state(aasm_current_state).call_action(:exit, self, *args)
 
     new_state = self.class.aasm_events[name].fire(self, *args)
     
     unless new_state.nil?
-      aasm_state_object_for_state(new_state).call_action(:enter, self)
+      aasm_state_object_for_state(new_state).call_action(:enter, self, *args)
       
       persist_successful = true
       if persist
         persist_successful = set_aasm_current_state_with_persistence(new_state)
-        self.class.aasm_events[name].execute_success_callback(self) if persist_successful
+        self.class.aasm_events[name].execute_success_callback(self, *args) if persist_successful
       else
         self.aasm_current_state = new_state
       end

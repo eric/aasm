@@ -15,13 +15,13 @@ module AASM
         end
       end
 
-      def call_action(action, record)
+      def call_action(action, record, *args)
         action = @options[action]
         case action
         when Symbol, String
-          record.send(action)
+          record.send(action, *args)
         when Proc
-          action.call(record)
+          action.call(record, *args)
         end
       end
 
