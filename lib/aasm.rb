@@ -123,7 +123,7 @@ module AASM
   def aasm_fire_event(name, persist, *args)
     aasm_state_object_for_state(aasm_current_state).call_action(:exit, self, *args)
 
-    new_state = self.class.aasm_events[name].fire(self, *args)
+    new_state = self.class.aasm_events[name].fire(self, nil, *args)
     
     unless new_state.nil?
       aasm_state_object_for_state(new_state).call_action(:enter, self, *args)
