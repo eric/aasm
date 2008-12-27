@@ -5,10 +5,13 @@ require File.join(File.dirname(__FILE__), 'persistence')
 
 module AASM
   def self.Version
-    '0.0.2'
+    '2.0.4'
   end
 
   class InvalidTransition < RuntimeError
+  end
+
+  class UndefinedState < RuntimeError
   end
   
   def self.included(base) #:nodoc:
@@ -117,7 +120,9 @@ module AASM
   end
 
   def aasm_state_object_for_state(name)
-    self.class.aasm_states.find {|s| s == name}
+    obj = self.class.aasm_states.find {|s| s == name}
+    raise AASM::UndefinedState, "State :#{name} doesn't exist" if obj.nil?
+    obj
   end
 
   def aasm_fire_event(name, persist, *args)
